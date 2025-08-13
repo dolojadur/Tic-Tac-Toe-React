@@ -67,17 +67,23 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
+const visibleHistory = history.slice(0, currentMove + 1);
   // map(elemento actual del array, indice del elemento)
-  const moves = history.map((squares, move) => {
+  const moves = visibleHistory.map((squares, move) => {
     let description;
-    if (move > 0) {
+    if (move == currentMove) {
+      description = "You're at move #" + move;
+    } else {if (move > 0) {
       description = "Go to move #" + move;
     } else {
       description = "Go to game start";
-    }
+    }}
     return (
       <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
+        {move == currentMove ? (
+          <span>{description}</span>
+        ) : (
+        <button onClick={() => jumpTo(move)}>{description}</button>)}
       </li>
     );
   });
@@ -93,7 +99,7 @@ export default function Game() {
     </div>
   );
 }
-
+let winner = null;
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -108,6 +114,7 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      winner=[a,b,c];
       return squares[a];
     }
   }
